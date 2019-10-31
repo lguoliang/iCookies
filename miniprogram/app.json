@@ -1,6 +1,16 @@
 {
   "pages": [
     "views/index/index",
+    "views/topic/topic",
+    "views/mine/mine",
+
+    "views/admin/index",
+    "views/admin/article/article",
+    "views/admin/articleList/articleList",
+    "views/admin/labelList/labelList",
+    "views/admin/comment/comment",
+    "views/admin/classify/classify",
+    
     "pages/index/index",
     "pages/userConsole/userConsole",
     "pages/storageConsole/storageConsole",
@@ -21,6 +31,32 @@
     "navigationBarBackgroundColor": "#F6F6F6",
     "navigationBarTitleText": "...",
     "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "color": "#959394",
+    "selectedColor": "#1296db",
+    "backgroundColor": "#fff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "views/index/index",
+        "iconPath": "/images/tab/index.png",
+        "selectedIconPath": "/images/tab/index_clicked.png",
+        "text": "首页"
+      },
+      {
+        "pagePath": "views/topic/topic",
+        "iconPath": "/images/tab/function.png",
+        "selectedIconPath": "/images/tab/function_clicked.png",
+        "text": "专题"
+      },
+      {
+        "pagePath": "views/mine/mine",
+        "iconPath": "/images/tab/mine.png",
+        "selectedIconPath": "/images/tab/mine_clicked.png",
+        "text": "我的"
+      }
+    ]
   },
   "sitemapLocation": "sitemap.json"
 }
