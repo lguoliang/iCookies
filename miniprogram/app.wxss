@@ -1,6 +1,10 @@
 /**app.wxss**/
-@import "colorui/main.wxss";
-@import "colorui/icon.wxss";
+/* @import "colorui/main.wxss"; */
+/* @import "colorui/icon.wxss"; */
+@import "icon.wxss";
+@import "colorui.wxss";
+@import "editor.wxss";
+@import "editorIcon.wxss";
 @import "style/other";
 /**app.wxss**/
 .container {

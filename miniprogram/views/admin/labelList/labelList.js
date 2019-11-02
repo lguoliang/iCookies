@@ -1,4 +1,3 @@
-// views/admin/labelList/labelList.js
 const api = require('../../../utils/api.js');
 Page({
 
@@ -11,7 +10,7 @@ Page({
     scrollLeft: 0,
     btnName: "保存关联",
     curLabelName: "",
-    labelList: [{value: 'asd'},{value: 'zxc'}],
+    labelList: [],
     isLabelModelShow: false,
     isLabelRelatedShow: false,
     nomore: false,
@@ -31,16 +30,40 @@ Page({
   },
 
   /**
-   * 获取label集合
-   * @param {*} e 
+   * tab切换
+   * @param {} e 
    */
-  getLabelList: async function () {
-    let that = this
-    let labelList = await api.getLabelList()
-    console.info(labelList)
+  tabSelect: async function (e) {
+    let that = this;
+    let tabCur = e.currentTarget.dataset.id
+    let filter;
+    if (tabCur === 1) {
+      filter = {
+        isShow: 1,
+        containLabel: 2,
+        label: that.data.curLabelName
+      }
+    }
+    else {
+      filter = {
+        isShow: 1,
+        containLabel: 1,
+        label: that.data.curLabelName
+      }
+    }
+
     that.setData({
-      labelList: labelList.result.data
+      tabCur: tabCur,
+      btnName: tabCur === 1 ? "保存关联" : "取消关联",
+      scrollLeft: (tabCur - 1) * 60,
+      nomore: false,
+      nodata: false,
+      page: 1,
+      posts: [],
+      filter: filter,
+      checkedList: []
     })
+    await that.getPostsList(filter)
   },
   /**
    * 页面相关事件处理函数--监听用户下拉动作
@@ -53,6 +76,26 @@ Page({
     await this.getLabelList()
     wx.stopPullDownRefresh();
   },
+
+  /**
+   * 页面上拉触底事件的处理函数
+   */
+  onReachBottom: function () {
+
+  },
+  /**
+   * 获取label集合
+   * @param {*} e 
+   */
+  getLabelList: async function () {
+    let that = this
+    let labelList = await api.getLabelList()
+    console.info(labelList)
+    that.setData({
+      labelList: labelList.result.data
+    })
+  },
+
   /**
     * 显示
     * @param {} e 
@@ -85,9 +128,26 @@ Page({
 
     await that.getPostsList(filter)
   },
+  /**
+    * 隐藏
+    * @param {*} e 
+  */
   hideLabelModal(e) {
     this.setData({
       isLabelModelShow: false
+    })
+  },
+  hideLabelRelatedModal(e) {
+    this.setData({
+      isLabelRelatedShow: false,
+      nomore: false,
+      nodata: false,
+      page: 1,
+      posts: [],
+      curLabelName: "",
+      checkedList: [],
+      tabCur: 1,
+      scrollLeft: 0
     })
   },
   /**
@@ -135,6 +195,30 @@ Page({
       }
     }
   },
+
+  /**
+   * 删除标签
+   * @param {*} e 
+   */
+  deleteLabelById: async function (e) {
+    let labelName = e.currentTarget.dataset.labelname
+    let labelId = e.currentTarget.id
+    let that = this
+    wx.showModal({
+      title: '提示',
+      content: '是否确认删除[' + labelName + ']标签',
+      success(res) {
+        if (res.confirm) {
+          api.deleteConfigById(labelId).then(res => {
+            return that.onPullDownRefresh()
+          }).then(res => { })
+          console.log(res)
+        } else if (res.cancel) {
+          console.log('用户点击取消')
+        }
+      }
+    })
+  },
   /**
    * 返回上一页
    * @param {*} e 
@@ -180,40 +264,83 @@ Page({
     })
     wx.hideLoading()
   },
+
   /**
-   * tab切换
-   * @param {} e 
+   *  触发滚动底部事件
    */
-  tabSelect: async function (e) {
+  bindscrolltolower: async function () {
     let that = this;
-    let tabCur = e.currentTarget.dataset.id
-    let filter;
-    if (tabCur === 1) {
-      filter = {
-        isShow: 1,
-        containLabel: 2,
-        label: that.data.curLabelName
-      }
-    }
-    else {
-      filter = {
-        isShow: 1,
-        containLabel: 1,
-        label: that.data.curLabelName
-      }
+    if(!that.data.canOperate)
+    {
+      return;
     }
 
     that.setData({
-      tabCur: tabCur,
-      btnName: tabCur === 1 ? "保存关联" : "取消关联",
-      scrollLeft: (tabCur - 1) * 60,
-      nomore: false,
-      nodata: false,
-      page: 1,
-      posts: [],
-      filter: filter,
-      checkedList: []
+      canOperate: false
     })
-    await that.getPostsList(filter)
+    that.getPostsList(that.data.filter)
+  },
+
+  /**
+   * checkBox变化事件
+   */
+  checkboxChange: async function (e) {
+    this.setData({
+      checkedList: e.detail.value
+    })
+  },
+  savePostsRelatedLabel: async function (e) {
+    let that = this
+    let posts = that.data.checkedList
+    if (posts.length == 0) {
+      wx.showToast({
+        title: '没有要保存的数据',
+        icon: 'none',
+        duration: 1500
+      })
+      return;
+    }
+    wx.showLoading({
+      title: '处理中...',
+    })
+    try {
+      console.info(that.data.curLabelName)
+      let res = await api.updateBatchPostsLabel(that.data.curLabelName, that.data.tabCur == 1 ? "add" : "delete", posts)
+      console.info(res)
+      if (res.result) {
+        wx.showToast({
+          title: '处理成功',
+          icon: 'none',
+          duration: 1500
+        })
+        that.setData({
+          nomore: false,
+          nodata: false,
+          page: 1,
+          posts: [],
+          curLabelName: "",
+          isLabelRelatedShow: false,
+          checkedList: [],
+          tabCur: 1,
+          scrollLeft: 0,
+        })
+      }
+      else {
+        wx.showToast({
+          title: '处理失败',
+          icon: 'none',
+          duration: 1500
+        })
+      }
+    }
+    catch (e) {
+      console.info(e)
+      wx.showToast({
+        title: '处理失败,请重试',
+        icon: 'none',
+        duration: 1500
+      })
+    }
+    wx.hideLoading()
   }
 })

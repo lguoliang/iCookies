@@ -1,7 +1,40 @@
 const db = wx.cloud.database()
 const _ = db.command
 
+/**
+ * 验证是否是管理员
+ */
+function checkAuthor() {
+    return wx.cloud.callFunction({
+        name: 'adminService',
+        data: {
+            action: "checkAuthor"
+        }
+    })
+}
 
+/**
+ * 获取评论列表
+ */
+function getCommentsList(page, flag) {
+    return db.collection('mini_comments')
+        .where({
+            flag: flag
+        })
+        .orderBy('timestamp', 'desc')
+        .skip((page - 1) * 10)
+        .limit(10)
+        .get()
+}
+/**
+ * 根据id获取文章明细
+ * @param {*} page 
+ */
+function getPostsById(id) {
+    return db.collection('mini_posts')
+        .doc(id)
+        .get()
+}
 function getNewPostsList(page, filter, orderBy) {
   let where = {}
   if (filter.title != undefined) {
@@ -60,7 +93,7 @@ function getNewPostsList(page, filter, orderBy) {
       where.classify = _.eq(filter.classify)
   }
 
-
+  
   return db.collection('mini_posts')
       .where(where)
       .orderBy(orderBy, 'desc')
@@ -134,6 +167,22 @@ function addBaseLabel(labelName) {
 }
 
 /**
+ * 更新文章标签
+ * @param {*} id 
+ * @param {*} isShow 
+ */
+function upsertPosts(id, data) {
+    return wx.cloud.callFunction({
+        name: 'adminService',
+        data: {
+            action: "upsertPosts",
+            id: id,
+            post: data
+        }
+    })
+}
+
+/**
  * 获取label集合
  */
 function getLabelList() {
@@ -145,6 +194,87 @@ function getLabelList() {
   })
 }
 
+/**
+ * 上传文件
+ */
+function uploadFile(cloudPath, filePath) {
+    return wx.cloud.uploadFile({
+        cloudPath: cloudPath,
+        filePath: filePath, // 文件路径
+    })
+}
+
+/**
+ * 更新文章状态
+ * @param {*} id 
+ * @param {*} isShow 
+ */
+function updatePostsShowStatus(id, isShow) {
+    return wx.cloud.callFunction({
+        name: 'adminService',
+        data: {
+            action: "updatePostsShowStatus",
+            id: id,
+            isShow: isShow
+        }
+    })
+}
+
+/**
+ * 获取label集合
+ */
+function getClassifyList() {
+    return wx.cloud.callFunction({
+        name: 'adminService',
+        data: {
+            action: "getClassifyList"
+        }
+    })
+}
+
+/**
+ * 新增基础主题
+ */
+function addBaseClassify(classifyName, classifyDesc) {
+    return wx.cloud.callFunction({
+        name: 'adminService',
+        data: {
+            action: "addBaseClassify",
+            classifyName: classifyName,
+            classifyDesc: classifyDesc
+        }
+    })
+}
+
+/**
+ * 获取label集合
+ */
+function updateBatchPostsClassify(classify,operate,posts) {
+    return wx.cloud.callFunction({
+        name: 'adminService',
+        data: {
+            action: "updateBatchPostsClassify",
+            posts:posts,
+            operate:operate,
+            classify:classify
+        }
+    })
+}
+
+/**
+ * 获取label集合
+ */
+function updateBatchPostsLabel(label,operate,posts) {
+    return wx.cloud.callFunction({
+        name: 'adminService',
+        data: {
+            action: "updateBatchPostsLabel",
+            posts:posts,
+            operate:operate,
+            label:label
+        }
+    })
+}
 
 module.exports = {
   // getPostsList: getPostsList,
@@ -159,29 +289,29 @@ module.exports = {
   // addPostChildComment: addPostChildComment,
   // getReportQrCodeUrl: getReportQrCodeUrl,
   // addPostQrCode: addPostQrCode,
-  // checkAuthor: checkAuthor,
+  checkAuthor: checkAuthor,
   addFormIds: addFormIds,
   queryFormIds: queryFormIds,
   // sendTemplateMessage: sendTemplateMessage,
   addReleaseLog: addReleaseLog,
   // getReleaseLogsList: getReleaseLogsList,
   // getNoticeLogsList: getNoticeLogsList,
-  // getPostsById: getPostsById,
+  getPostsById: getPostsById,
   // deleteConfigById: deleteConfigById,
-  // addBaseClassify: addBaseClassify,
+  addBaseClassify: addBaseClassify,
   addBaseLabel: addBaseLabel,
-  // upsertPosts: upsertPosts,
+  upsertPosts: upsertPosts,
   // updatePostsLabel: updatePostsLabel,
   // updatePostsClassify: updatePostsClassify,
-  // updatePostsShowStatus: updatePostsShowStatus,
-  // getCommentsList: getCommentsList,
+  updatePostsShowStatus: updatePostsShowStatus,
+  getCommentsList: getCommentsList,
   // changeCommentFlagById: changeCommentFlagById,
   getLabelList: getLabelList,
-  // getClassifyList: getClassifyList,
+  getClassifyList: getClassifyList,
   getNewPostsList: getNewPostsList,
   // deletePostById: deletePostById,
-  // uploadFile: uploadFile,
+  uploadFile: uploadFile,
   // getTempUrl: getTempUrl,
-  // updateBatchPostsLabel:updateBatchPostsLabel,
-  // updateBatchPostsClassify:updateBatchPostsClassify
+  updateBatchPostsLabel:updateBatchPostsLabel,
+  updateBatchPostsClassify:updateBatchPostsClassify
 }
