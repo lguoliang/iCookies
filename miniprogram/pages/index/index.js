@@ -105,6 +105,9 @@ Page({
       wx.hideLoading()
       return
     }
+
+    // let result = await api.getPostsList(page, filter, 1, orderBy, label)
+    wx.a.test()
   },
 
   /**

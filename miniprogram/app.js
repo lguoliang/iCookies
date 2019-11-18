@@ -14,7 +14,7 @@ App({
         traceUser: true,
       })
     }
-
+    wx.a = require('./utils/api')
     this.globalData = {}
   }
 })
