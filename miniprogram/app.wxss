@@ -1,11 +1,8 @@
 /**app.wxss**/
-/* @import "colorui/main.wxss"; */
-/* @import "colorui/icon.wxss"; */
-@import "icon.wxss";
-@import "colorui.wxss";
-@import "editor.wxss";
-@import "editorIcon.wxss";
-@import "style/other";
+@import "./style/icon.wxss";
+@import "./style/colorui.wxss";
+@import "./style/editor.wxss";
+@import "./style/editorIcon.wxss";
 /**app.wxss**/
 .container {
   display: flex;

@@ -1,6 +1,6 @@
 {
   "usingComponents": {},
-  "navigationBarTitleText": "首页",
+  "navigationBarTitleText": "专题",
   "backgroundTextStyle": "dark",
   "enablePullDownRefresh": true
 }

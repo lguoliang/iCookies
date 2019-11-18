@@ -30,66 +30,13 @@
 		"game": {
 			"list": []
 		},
-		"gamePlugin": {
-			"current": -1,
-			"list": []
-		},
 		"miniprogram": {
 			"current": 0,
 			"list": [
 				{
 					"id": -1,
 					"name": "db guide",
-					"pathName": "pages/databaseGuide/databaseGuide",
-					"query": ""
-				},
-				{
-					"id": 1,
-					"name": "后台管理",
-					"pathName": "views/admin/index",
-					"query": "",
-					"scene": null
-				},
-				{
-					"id": -1,
-					"name": "标签管理",
-					"pathName": "views/admin/labelList/labelList",
-					"query": "",
-					"scene": null
-				},
-				{
-					"id": -1,
-					"name": "文章管理",
-					"pathName": "views/admin/articleList/articleList",
-					"query": "",
-					"scene": null
-				},
-				{
-					"id": -1,
-					"name": "新增文章",
-					"pathName": "views/admin/article/article",
-					"query": "",
-					"scene": null
-				},
-				{
-					"id": -1,
-					"name": "专题管理",
-					"pathName": "views/admin/classify/classify",
-					"query": "",
-					"scene": null
-				},
-				{
-					"id": -1,
-					"name": "评论管理",
-					"pathName": "views/admin/comment/comment",
-					"query": "",
-					"scene": null
-				},
-				{
-					"id": -1,
-					"name": "我的",
-					"pathName": "views/mine/mine",
-					"scene": null
+					"pathName": "pages/databaseGuide/databaseGuide"
 				}
 			]
 		}
