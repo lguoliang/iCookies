@@ -3,13 +3,25 @@ const app = getApp()
 
 Page({
   data: {
-    nodata: true,
+    nodata: false,
     defaultSearchValue: '',
     navItems: [{ name: '最新', index: 1 }, { name: '热门', index: 2 }, { name: '标签', index: 3 }],
     tabCur: 1,
 
     nomore: false,
-    page: 1
+    page: 1,
+    filter: "",
+    posts: [],
+
+    showHot: false,
+    hotItems: ["浏览最多", "评论最多", "点赞最多", "收藏最多"],
+    hotCur: 0,
+    
+    showLabels: false,
+    labelList: [],
+    labelCur: "全部",
+
+    whereItem:['', 'createTime',''] //下拉查询条件
   },
 
   /**
@@ -49,23 +61,36 @@ Page({
    */
   async tabSelect (e) {
     let that = this;
-    console.log(e);
     let tabCur = e.currentTarget.dataset.id
     switch (tabCur) {
       case 1: {
         that.setData({
           tabCur: e.currentTarget.dataset.id,
+          nomore: false,
+          nodata: false,
           showHot: false,
-          showLabels: false
+          showLabels: false,
+          defaultSearchValue: "",
+          posts: [],
+          page: 1,
+          whereItem:['', 'createTime','']
         })
+        await that.getPostsList("", 'createTime')
         break
       }
       case 2: {
         that.setData({
+          posts: [],
           tabCur: e.currentTarget.dataset.id,
           showHot: true,
-          showLabels: false
+          showLabels: false,
+          defaultSearchValue: "",
+          page: 1,
+          nomore: false,
+          nodata: false,
+          whereItem:['', 'totalVisits','']
         })
+        await that.getPostsList("", "totalVisits")
         break
       }
       case 3: {
@@ -74,6 +99,13 @@ Page({
           showHot: false,
           showLabels: true
         })
+        let task = that.getPostsList("", 'createTime')
+        let labelList = await wx.a.getLabelList()
+
+        that.setData({
+          labelList: labelList.result.data
+        })
+        await task
         break
       }
     }
@@ -83,13 +115,19 @@ Page({
    * 热门按钮切换
    * @param {*} e 
    */
-  hotSelect: function () {},
+  hotSelect: function () {
+    let that = this
+    let hotCur = e.currentTarget.dataset.id
+  },
 
   /**
    * 标签按钮切换
    * @param {*} e 
    */
-  labelSelect: function () {},
+  labelSelect: function (e) {
+    let that = this
+    let labelCur = e.currentTarget.dataset.id
+  },
 
   /**
    * 获取文章列表
@@ -106,12 +144,34 @@ Page({
       return
     }
 
-    // let result = await api.getPostsList(page, filter, 1, orderBy, label)
-    wx.a.test()
+    let result = await wx.a.getPostsList(page, filter, 1, orderBy, label)
+    console.log(result)
+    if (result.data.length === 0) {
+      that.setData({
+        nomore: true
+      })
+      if (page === 1) {
+        that.setData({
+          nodata: true
+        })
+      }
+    } else {
+      that.setData({
+        page: page + 1,
+        posts: that.data.posts.concat(result.data),
+      })
+    }
+
+    wx.hideLoading()
   },
 
   /**
    * 点击文章明细
    */
-  bindPostDetail: function () {}
+  bindPostDetail: function (e) {
+    let blogId = e.currentTarget.id;
+    wx.navigateTo({
+      url: '../detail/detail?id=' + blogId
+    })
+  }
 })

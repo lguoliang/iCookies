@@ -22,17 +22,28 @@
       </view>
     </view>
   </scroll-view>
+
   <scroll-view wx:if="{{showHot}}" scroll-x class="bg-white nav solids-bottom">
     <view class="padding bg-white">
-      <view wx:for="{{hotItems}}" wx:for-index="idx" data-data="{{item}}" class="cu-tag round lg {{idx==hotCur?'bg-blue':''}}" bindtap='hotSelect' data-id="{{idx}}">
+      <view class="cu-tag round lg {{idx==hotCur?'bg-blue':''}}"
+        wx:for="{{hotItems}}" wx:key
+        data-data="{{item}}"
+        data-id="{{idx}}"
+        bindtap='hotSelect'>
         {{item}}
       </view>
     </view>
   </scroll-view>
+
   <scroll-view wx:if="{{showLabels}}" scroll-x class="bg-white nav solids-bottom">
     <view class="padding bg-white">
-      <view class="cu-tag round lg {{'全部'==labelCur?'bg-blue':''}}" data-id="全部" bindtap='labelSelect'>全部</view>
-      <view wx:for="{{labelList}}" wx:key="idx" wx:for-index="idx" wx:for-item="item" class="cu-tag round lg {{item.value==labelCur?'bg-blue':''}}" bindtap='labelSelect' data-id="{{item.value}}">
+      <view class="cu-tag round lg {{'全部'==labelCur?'bg-blue':''}}"
+        data-id="全部" 
+        bindtap='labelSelect'>全部</view>
+      <view class="cu-tag round lg {{item.value==labelCur?'bg-blue':''}}"
+        wx:for="{{labelList}}" wx:key
+        data-id="{{item.value}}"
+        bindtap='labelSelect'>
         {{item.value}}
       </view>
     </view>
@@ -44,7 +55,9 @@
   <view wx:for="{{posts}}" wx:key="idx" wx:for-index="idx" wx:for-item="item" data-idx="{{idx}}" id="{{item._id}}" bindtap="bindPostDetail" class="cu-item shadow solids-bottom">
     <view class='text-content margin-top-sm'>{{item.title}}</view>
     <view class="grid col-1 flex-sub padding-lr">
-      <view class="bg-img only-img" style="background-image:url({{item.defaultImageUrl}})"></view>
+      <view class="bg-img only-img" style="background-image:url({{item.defaultImageUrl}})">
+        <image src="{{item.defaultImageUrl}}" mode="aspectFit" style="width: 100%;height: 100%;" />
+      </view>
     </view>
     <view class='text-gray text-sm text-right padding'>
       <text class="cuIcon-timefill"></text>

@@ -5,6 +5,7 @@ const _ = db.command
  * 获取评论列表
  */
 function getCommentsList(page, flag) {
+  // TODO
   return console.log('api')
 }
 /**
@@ -12,6 +13,7 @@ function getCommentsList(page, flag) {
 * @param {*} page 
 */
 function getPostsById(id) {
+  // TODO
   return console.log('api')
 }
 /**
@@ -19,6 +21,7 @@ function getPostsById(id) {
 * @param {*} page 
 */
 function getNoticeLogsList(page, openId) {
+  // TODO
   return console.log('api')
 }
 
@@ -27,10 +30,12 @@ function getNoticeLogsList(page, openId) {
 * @param {*} page 
 */
 function getReleaseLogsList(page) {
+  // TODO
   return console.log('api')
 }
 
 function getNewPostsList(page, filter, orderBy) {
+  // TODO
   return console.log('api')
 }
 /**
@@ -38,7 +43,49 @@ function getNewPostsList(page, filter, orderBy) {
 * @param {} page 
 */
 function getPostsList(page, filter, isShow, orderBy, label) {
-  return console.log('api')
+  let where = {}
+
+  if (filter !== '') {
+    where.title = db.RegExp({
+      regexp: filter,
+      options: 'i',
+    })
+  }
+  if (isShow !== -1) {
+    where.isShow = isShow
+  }
+
+  if (orderBy == undefined || orderBy == "") {
+    orderBy = "createTime"
+  }
+
+  if (label != undefined && label != "") {
+    where.label = db.RegExp({
+      regexp: label,
+      options: 'i',
+    })
+  }
+  
+  return db.collection('mini_posts')
+    .where(where)
+    .orderBy(orderBy, 'desc')
+    .skip((page - 1) * 10)
+    .limit(10)
+    .field({
+      _id: true,
+      author: true,
+      createTime: true,
+      defaultImageUrl: true,
+      title: true,
+      totalComments: true,
+      totalVisits: true,
+      totalZans: true,
+      isShow: true,
+      classify: true,
+      label: true,
+      digest: true
+    })
+    .get()
 }
 
 /**
@@ -47,6 +94,7 @@ function getPostsList(page, filter, isShow, orderBy, label) {
 * @param {*} postId 
 */
 function getPostComments(page, postId) {
+  // TODO
   return console.log('api')
 }
 
@@ -55,6 +103,7 @@ function getPostComments(page, postId) {
 * @param {} page 
 */
 function getPostRelated(where, page) {
+  // TODO
   return console.log('api')
 }
 /**
@@ -62,6 +111,7 @@ function getPostRelated(where, page) {
 * @param {} id 
 */
 function getPostDetail(id) {
+  // TODO
   return console.log('api')
 }
 
@@ -69,6 +119,7 @@ function getPostDetail(id) {
 * 新增用户收藏文章
 */
 function addPostCollection(data) {
+  // TODO
   return console.log('api')
 }
 
@@ -76,6 +127,7 @@ function addPostCollection(data) {
 * 取消喜欢或收藏
 */
 function deletePostCollectionOrZan(postId, type) {
+  // TODO
   return console.log('api')
 }
 
@@ -83,6 +135,7 @@ function deletePostCollectionOrZan(postId, type) {
 * 新增评论
 */
 function addPostComment(commentContent) {
+  // TODO
   return console.log('api')
 }
 
@@ -91,6 +144,7 @@ function addPostComment(commentContent) {
 * @param {} data 
 */
 function addPostZan(data) {
+  // TODO
   return console.log('api')
 }
 
@@ -100,6 +154,7 @@ function addPostZan(data) {
 * @param {*} comments 
 */
 function addPostChildComment(id, postId, comments) {
+  // TODO
   return console.log('api')
 }
 
@@ -110,12 +165,14 @@ function addPostChildComment(id, postId, comments) {
 * @param {*} comments 
 */
 function addPostQrCode(postId, timestamp) {
+  // TODO
   return console.log('api')
 }
 /**
 * 获取打赏码
 */
 function getQrCode() {
+  // TODO
   return console.log('api')
 }
 
@@ -124,6 +181,7 @@ function getQrCode() {
 * @param {*} id 
 */
 function getReportQrCodeUrl(id) {
+  // TODO
   return console.log('api')
 }
 
@@ -131,6 +189,7 @@ function getReportQrCodeUrl(id) {
 * 验证是否是管理员
 */
 function checkAuthor() {
+  // TODO
   return console.log('api')
 }
 
@@ -138,6 +197,7 @@ function checkAuthor() {
 * 查询可用的formId数量
 */
 function queryFormIds() {
+  // TODO
   return console.log('api')
 }
 
@@ -145,6 +205,7 @@ function queryFormIds() {
 * 查询可用的formId数量
 */
 function addFormIds(formIds) {
+  // TODO
   return console.log('api')
 }
 
@@ -155,6 +216,7 @@ function addFormIds(formIds) {
 * @param {*} blogId 
 */
 function sendTemplateMessage(nickName, comment, blogId) {
+  // TODO
   return console.log('api')
 }
 
@@ -163,6 +225,7 @@ function sendTemplateMessage(nickName, comment, blogId) {
 * @param {} log 
 */
 function addReleaseLog(log, title) {
+  // TODO
   return console.log('api')
 }
 
@@ -172,6 +235,7 @@ function addReleaseLog(log, title) {
 * @param {*} isShow 
 */
 function updatePostsShowStatus(id, isShow) {
+  // TODO
   return console.log('api')
 }
 
@@ -181,6 +245,7 @@ function updatePostsShowStatus(id, isShow) {
 * @param {*} isShow 
 */
 function updatePostsClassify(id, classify) {
+  // TODO
   return console.log('api')
 }
 
@@ -190,6 +255,7 @@ function updatePostsClassify(id, classify) {
 * @param {*} isShow 
 */
 function updatePostsLabel(id, label) {
+  // TODO
   return console.log('api')
 }
 
@@ -199,6 +265,7 @@ function updatePostsLabel(id, label) {
 * @param {*} isShow 
 */
 function upsertPosts(id, data) {
+  // TODO
   return console.log('api')
 }
 
@@ -206,6 +273,7 @@ function upsertPosts(id, data) {
 * 新增基础标签
 */
 function addBaseLabel(labelName) {
+  // TODO
   return console.log('api')
 }
 
@@ -213,6 +281,7 @@ function addBaseLabel(labelName) {
 * 新增基础主题
 */
 function addBaseClassify(classifyName, classifyDesc) {
+  // TODO
   return console.log('api')
 }
 
@@ -220,10 +289,12 @@ function addBaseClassify(classifyName, classifyDesc) {
 * 新增基础主题
 */
 function deleteConfigById(id) {
+  // TODO
   return console.log('api')
 }
 
 function deletePostById(id) {
+  // TODO
   return console.log('api')
 }
 
@@ -233,6 +304,7 @@ function deletePostById(id) {
 * @param {*} flag 
 */
 function changeCommentFlagById(id, flag, postId, count) {
+  // TODO
   return console.log('api')
 }
 
@@ -240,13 +312,19 @@ function changeCommentFlagById(id, flag, postId, count) {
 * 获取label集合
 */
 function getLabelList() {
-  return console.log('api')
+  return wx.cloud.callFunction({
+    name: 'adminService',
+    data: {
+      action: "getLabelList"
+    }
+  })
 }
 
 /**
 * 获取label集合
 */
 function getClassifyList() {
+  // TODO
   return console.log('api')
 }
 
@@ -254,6 +332,7 @@ function getClassifyList() {
 * 获取label集合
 */
 function updateBatchPostsClassify(classify,operate,posts) {
+  // TODO
   return console.log('api')
 }
 
@@ -261,6 +340,7 @@ function updateBatchPostsClassify(classify,operate,posts) {
 * 获取label集合
 */
 function updateBatchPostsLabel(label,operate,posts) {
+  // TODO
   return console.log('api')
 }
 
@@ -268,6 +348,7 @@ function updateBatchPostsLabel(label,operate,posts) {
 * 上传文件
 */
 function uploadFile(cloudPath, filePath) {
+  // TODO
   return console.log('api')
 }
 
@@ -275,8 +356,11 @@ function uploadFile(cloudPath, filePath) {
 * 获取打赏码
 */
 function getTempUrl(fileID) {
+  // TODO
   return console.log('api')
 }
 
 module.exports = {
+  getPostsList,
+  getLabelList
 }

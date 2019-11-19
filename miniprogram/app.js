@@ -1,20 +1,62 @@
 //app.js
 App({
   onLaunch: function () {
-    
+    // wx.c = require('./utils/config')
     if (!wx.cloud) {
       console.error('请使用 2.2.3 或以上的基础库以使用云能力')
     } else {
       wx.cloud.init({
-        // env 参数说明：
-        //   env 参数决定接下来小程序发起的云开发调用（wx.cloud.xxx）会默认请求到哪个云环境的资源
-        //   此处请填入环境 ID, 环境 ID 可打开云控制台查看
-        //   如不填则使用默认环境（第一个创建的环境）
-        // env: 'my-env-id',
+        env: false ? 'gl123-fcf12c' : 'test-e1a9d',
         traceUser: true,
       })
+
+      var openid = wx.getStorageSync('openid');
+      if (openid) {
+        this.globalData.openid = openid
+      } else {
+        wx.cloud.callFunction({
+          name: 'login',
+          data: {},
+          success: res => {
+            console.log(res.result.openid)
+            this.globalData.openid = res.result.openid
+            wx.setStorageSync('openid', res.result.openid);
+          },
+          fail: err => {
+            console.error('[云函数] [login] 调用失败', err)
+          }
+        })
+      }
+      console.info('openid', this.globalData.openid)
     }
     wx.a = require('./utils/api')
-    this.globalData = {}
+    // this.globalData = {}
+  },
+  checkUserInfo: function (cb) {
+    let that = this
+    if (that.globalData.userInfo) {
+      typeof cb == "function" && cb(that.globalData.userInfo, true);
+    } else {
+      wx.getSetting({
+        success: function (res) {
+          if (res.authSetting['scope.userInfo']) {
+            // 已经授权，可以直接调用 getUserInfo 获取头像昵称
+            wx.getUserInfo({
+              success: function (res) {
+                that.globalData.userInfo = JSON.parse(res.rawData);
+                typeof cb == "function" && cb(that.globalData.userInfo, true);
+              }
+            })
+          } else {
+            typeof cb == "function" && cb(that.globalData.userInfo, false);
+          }
+        }
+      })
+    }
+  },
+  globalData: {
+    openid: "",
+    userInfo: null,
+    lastLoginDate: ""//最后登录时间
   }
 })
