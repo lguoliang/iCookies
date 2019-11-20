@@ -189,8 +189,12 @@ function getReportQrCodeUrl(id) {
 * 验证是否是管理员
 */
 function checkAuthor() {
-  // TODO
-  return console.log('api')
+  return wx.cloud.callFunction({
+    name: 'adminService',
+    data: {
+      action: "checkAuthor"
+    }
+  })
 }
 
 /**
@@ -362,5 +366,6 @@ function getTempUrl(fileID) {
 
 module.exports = {
   getPostsList,
-  getLabelList
+  getLabelList,
+  checkAuthor
 }

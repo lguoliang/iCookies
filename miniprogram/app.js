@@ -30,6 +30,7 @@ App({
       console.info('openid', this.globalData.openid)
     }
     wx.a = require('./utils/api')
+    wx.u = require('./utils/util')
     // this.globalData = {}
   },
   checkUserInfo: function (cb) {
