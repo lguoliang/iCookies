@@ -8,7 +8,7 @@
 </view>
 <view class="cu-list menu shadow-lg">
   <view class="cu-item arrow">
-    <view class='content' bindtap='showFormModal'>
+    <view class='content' bindtap='handleFormid'>
       <text class='cuIcon-cascades text-grey'></text>
       <text class='text-grey'>管理员FormId</text>
     </view>
@@ -23,7 +23,7 @@
     </view>
   </view>
   <view class="cu-item arrow">
-    <view class='content' bindtap='showReleaseModal'>
+    <view class='content' bindtap='handleRelease'>
       <text class='cuIcon-formfill text-grey'></text>
       <text class='text-grey'>版本发布</text>
     </view>
@@ -37,41 +37,42 @@
 </view>
 <view class="cu-list menu shadow-lg">
   <view class="cu-item arrow">
-    <view class='content' bindtap='showArticle'>
+    <view class='content' data-name="articleList" bindtap='toRoute'>
       <text class='cuIcon-post text-grey'></text>
       <text class='text-grey'>文章管理</text>
     </view>
   </view>
   <view class="cu-item arrow">
-    <view class='content' bindtap='showComment'>
+    <view class='content' data-name="comment" bindtap='toRoute'>
       <text class='cuIcon-comment text-grey'></text>
       <text class='text-grey'>评论管理</text>
     </view>
   </view>
   <view class="cu-item arrow">
-    <view class='content' bindtap='showClassify'>
+    <view class='content' data-name="classify" bindtap='toRoute'>
       <text class='cuIcon-form text-grey'></text>
       <text class='text-grey'>专题管理</text>
     </view>
   </view>
   <view class="cu-item arrow">
-    <view class='content' bindtap='showLabel'>
+    <view class='content' data-name="labelList" bindtap='toRoute'>
       <text class='cuIcon-tagfill text-grey'></text>
       <text class='text-grey'>标签管理</text>
     </view>
   </view>
 </view>
+
 <!-- formId设置窗口 -->
 <view class="cu-modal {{isShow?'show':''}}">
   <view class="cu-dialog">
     <view class="cu-bar bg-white justify-end">
       <view class='content'>生成FormId</view>
-      <view class='action' bindtap='hideFormModal'>
+      <view class='action' bindtap='handleFormid'>
         <text class='cuIcon-close text-red'></text>
       </view>
     </view>
     <view class='padding-xl'>
-      <view wx:for="{{formIds}}" wx:key="idx" wx:for-index="idx" wx:for-item="item">
+      <view wx:for="{{formIds}}" wx:key>
         <view>{{item}}</view>
       </view>
     </view>
@@ -85,12 +86,13 @@
     </view>
   </view>
 </view>
+
 <!-- 版本发布窗口 -->
 <view class="cu-modal {{isReleaseShow?'show':''}}">
   <view class="cu-dialog">
     <view class="cu-bar bg-white justify-end">
       <view class='content'>版本发布</view>
-      <view class='action' bindtap='hideReleaseModal'>
+      <view class='action' bindtap='handleRelease'>
         <text class='cuIcon-close text-red'></text>
       </view>
     </view>
@@ -110,7 +112,7 @@
       </view>
       <view class="cu-bar bg-white justify-end">
         <view class='action'>
-          <button class='cu-btn' bindtap='hideReleaseModal'>取消</button>
+          <button class='cu-btn' bindtap='handleRelease'>取消</button>
           <button form-type="submit" class='cu-btn margin-left bg-green'>保存</button>
         </view>
       </view>

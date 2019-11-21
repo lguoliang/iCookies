@@ -367,5 +367,6 @@ function getTempUrl(fileID) {
 module.exports = {
   getPostsList,
   getLabelList,
-  checkAuthor
+  checkAuthor,
+  queryFormIds
 }
