@@ -51,6 +51,19 @@
 					"pathName": "pages/admin/index",
 					"query": "",
 					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "文章管理",
+					"pathName": "pages/admin/articleList/articleList",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "文章编辑",
+					"pathName": "pages/admin/article/article",
+					"scene": null
 				}
 			]
 		}

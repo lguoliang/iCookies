@@ -6,8 +6,8 @@
       </view>
       <view class='padding-xl text-gray'>允许微信授权后,可体验更多功能</view>
       <view class="cu-bar bg-white justify-center ">
-        <view class='action padding'>
-          <button class='cu-btn line-green text-green' style='padding:0 90rpx;margin-right: 10rpx;' data-name="index" bindtap='toRoute'>返回首页</button>
+        <view class='action'>
+          <button class='cu-btn line-green text-green' style='padding:0 90rpx' data-name="index" bindtap='toRoute'>返回首页</button>
           <button open-type='getUserInfo' class='cu-btn bg-green margin-left' style='padding:0 90rpx' bindgetuserinfo="getUserInfo">
             授权登录
           </button>

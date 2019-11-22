@@ -90,8 +90,17 @@ async function addReleaseLog(event) {
  * @param {*} event 
  */
 async function updatePostsShowStatus(event) {
-  // TODO
-  return true;
+  try {
+    await db.collection('mini_posts').doc(event.id).update({
+      data: {
+        isShow: event.isShow
+      }
+    })
+    return true;
+  } catch (e) {
+    console.error(e)
+    return false;
+  }
 }
 
 /**
@@ -117,8 +126,23 @@ async function updatePostsLabel(event) {
  * @param {*} event 
  */
 async function upsertPosts(event) {
-  // TODO
-  return true;
+  try {
+    let collection = "mini_posts"
+    if (event.id === "") {
+      await db.collection(collection).add({
+        data: event.post
+      });
+    }
+    else {
+      await db.collection(collection).doc(event.id).update({
+        data: event.post
+      });
+    }
+    return true;
+  } catch (e) {
+    console.error(e)
+    return false;
+  };
 }
 
 /**
@@ -149,8 +173,13 @@ async function deleteConfigById(event) {
 }
 
 async function deletePostById(event) {
-  // TODO
-  return true;
+  try {
+    await db.collection('mini_posts').doc(event.id).remove()
+    return true;
+  } catch (e) {
+    console.error(e)
+    return false;
+  }
 }
 
 /**
@@ -167,17 +196,69 @@ async function changeCommentFlagById(event) {
  * @param {*} event 
  */
 async function getLabelList(event) {
-  // TODO
-  return true;
+  const MAX_LIMIT = 100
+  const countResult = await db.collection('mini_config').where({
+    key: 'basePostsLabels'
+  }).count()
+  const total = countResult.total
+  if (total === 0) {
+    return {
+      data: [],
+      errMsg: "no label data",
+    }
+  }
+  // 计算需分几次取
+  const batchTimes = Math.ceil(total / 100)
+  // 承载所有读操作的 promise 的数组
+  const tasks = []
+  for (let i = 0; i < batchTimes; i++) {
+    const promise = db.collection('mini_config').where({
+      key: 'basePostsLabels'
+    }).skip(i * MAX_LIMIT).limit(MAX_LIMIT).get()
+    tasks.push(promise)
+  }
+  // 等待所有
+  return (await Promise.all(tasks)).reduce((acc, cur) => {
+    return {
+      data: acc.data.concat(cur.data),
+      errMsg: acc.errMsg,
+    }
+  })
 }
 
 /**
- * 获取所有label集合
+ * 获取所有Classify集合
  * @param {*} event 
  */
 async function getClassifyList(event) {
-  // TODO
-  return true;
+  const MAX_LIMIT = 100
+  const countResult = await db.collection('mini_config').where({
+    key: 'basePostsClassify'
+  }).count()
+  const total = countResult.total
+  if (total === 0) {
+    return {
+      data: [],
+      errMsg: "no classify data",
+    }
+  }
+  // 计算需分几次取
+  const batchTimes = Math.ceil(total / 100)
+  // 承载所有读操作的 promise 的数组
+  const tasks = []
+  for (let i = 0; i < batchTimes; i++) {
+    const promise = db.collection('mini_config').where({
+      key: 'basePostsClassify'
+    }).skip(i * MAX_LIMIT).limit(MAX_LIMIT).get()
+    tasks.push(promise)
+  }
+  // 等待所有
+  return (await Promise.all(tasks)).reduce((acc, cur) => {
+    return {
+      data: acc.data.concat(cur.data),
+      errMsg: acc.errMsg,
+    }
+  })
 }
 
 /**

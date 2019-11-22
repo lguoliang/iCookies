@@ -13,8 +13,9 @@ function getCommentsList(page, flag) {
 * @param {*} page 
 */
 function getPostsById(id) {
-  // TODO
-  return console.log('api')
+  return db.collection('mini_posts')
+    .doc(id)
+    .get()
 }
 /**
 * 获取消息列表
@@ -35,8 +36,83 @@ function getReleaseLogsList(page) {
 }
 
 function getNewPostsList(page, filter, orderBy) {
-  // TODO
-  return console.log('api')
+  let where = {}
+  if (filter.title != undefined) {
+    where.title = db.RegExp({
+      regexp: filter.title,
+      options: 'i',
+    })
+  }
+  if (filter.isShow != undefined) {
+    where.isShow = filter.isShow
+  }
+  if (filter.classify != undefined) {
+    where.classify = filter.classify
+  }
+
+  if (filter.hasClassify == 1) {
+    where.classify = _.nin(["", 0, undefined])
+  }
+
+  if (filter.hasClassify == 2) {
+    where.classify = _.in(["", 0, undefined])
+  }
+
+  if (orderBy == undefined || orderBy == "") {
+    orderBy = "createTime"
+  }
+
+  if (filter.hasLabel == 1) {
+    where.label = _.neq([])
+  }
+
+  if (filter.hasLabel == 2) {
+    where.label = _.eq([])
+  }
+
+  //不包含某个标签
+  if (filter.containLabel == 2) {
+    where.label = _.nin([filter.label])
+  }
+
+  //包含某个标签
+  if (filter.containLabel == 1) {
+    where.label = db.RegExp({
+      regexp: filter.label,
+      options: 'i',
+    })
+  }
+
+  //不包含某个主题
+  if (filter.containClassify == 2) {
+    where.classify = _.neq(filter.classify)
+  }
+
+  //包含某个主题
+  if (filter.containClassify == 1) {
+    where.classify = _.eq(filter.classify)
+  }
+
+
+  return db.collection('mini_posts')
+    .where(where)
+    .orderBy(orderBy, 'desc')
+    .skip((page - 1) * 10)
+    .limit(10)
+    .field({
+      _id: true,
+      author: true,
+      createTime: true,
+      defaultImageUrl: true,
+      title: true,
+      totalComments: true,
+      totalVisits: true,
+      totalZans: true,
+      isShow: true,
+      classify: true,
+      label: true,
+      digest: true
+    }).get()
 }
 /**
 * 获取文章列表
@@ -239,8 +315,14 @@ function addReleaseLog(log, title) {
 * @param {*} isShow 
 */
 function updatePostsShowStatus(id, isShow) {
-  // TODO
-  return console.log('api')
+  return wx.cloud.callFunction({
+    name: 'adminService',
+    data: {
+      action: "updatePostsShowStatus",
+      id: id,
+      isShow: isShow
+    }
+  })
 }
 
 /**
@@ -269,8 +351,14 @@ function updatePostsLabel(id, label) {
 * @param {*} isShow 
 */
 function upsertPosts(id, data) {
-  // TODO
-  return console.log('api')
+  return wx.cloud.callFunction({
+    name: 'adminService',
+    data: {
+      action: "upsertPosts",
+      id: id,
+      post: data
+    }
+  })
 }
 
 /**
@@ -298,8 +386,13 @@ function deleteConfigById(id) {
 }
 
 function deletePostById(id) {
-  // TODO
-  return console.log('api')
+  return wx.cloud.callFunction({
+    name: 'adminService',
+    data: {
+      action: "deletePostById",
+      id: id
+    }
+  })
 }
 
 /**
@@ -325,11 +418,15 @@ function getLabelList() {
 }
 
 /**
-* 获取label集合
+* 获取Classify集合
 */
 function getClassifyList() {
-  // TODO
-  return console.log('api')
+  return wx.cloud.callFunction({
+    name: 'adminService',
+    data: {
+      action: "getClassifyList"
+    }
+  })
 }
 
 /**
@@ -361,12 +458,19 @@ function uploadFile(cloudPath, filePath) {
 */
 function getTempUrl(fileID) {
   // TODO
-  return console.log('api')
+  return console.log('api') 
 }
 
 module.exports = {
   getPostsList,
-  getLabelList,
-  checkAuthor,
-  queryFormIds
+  getNewPostsList,
+  checkAuthor,// 校验
+  queryFormIds,
+  // admin
+  upsertPosts, // 新增 & 更新文章
+  getPostsById, // 获取文章
+  updatePostsShowStatus, // 控制文章显示
+  getClassifyList, // 获取专题列表
+  getLabelList, // 获取标签列表
+  deletePostById // 删除文章
 }
