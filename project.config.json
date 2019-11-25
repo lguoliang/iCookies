@@ -72,6 +72,20 @@
 					"pathName": "pages/admin/labelList/labelList",
 					"query": "",
 					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "专题管理",
+					"pathName": "pages/admin/classify/classify",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "文章详情",
+					"pathName": "pages/detail/detail",
+					"query": "id=4a741dc95dbc3653001589d63f32b5ec",
+					"scene": null
 				}
 			]
 		}

@@ -79,7 +79,7 @@ Page({
       'classify': '../admin/classify/classify',
       // 标签管理
       'labelList': '../admin/labelList/labelList',
-      // todo
+      // subscribe
       'subscribe': '../admin/subscribe/subscribe'
     }
     wx.navigateTo({

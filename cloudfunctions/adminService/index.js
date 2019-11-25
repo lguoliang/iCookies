@@ -150,8 +150,25 @@ async function upsertPosts(event) {
  * @param {*} event 
  */
 async function addBaseLabel(event) {
-  // TODO
-  return true;
+  let key = "basePostsLabels"
+  let collection = "mini_config"
+  let result = await db.collection(collection).where({
+    key: key,
+    value: event.labelName
+  }).get()
+  if (result.data.length > 0) {
+    return false
+  }
+  else {
+    await db.collection(collection).add({
+      data: {
+        key: key,
+        timestamp: Date.now(),
+        value: event.labelName
+      }
+    });
+    return true;
+  }
 }
 
 /**
@@ -159,8 +176,29 @@ async function addBaseLabel(event) {
  * @param {} event 
  */
 async function addBaseClassify(event) {
-  // TODO
-  return true;
+  let key = "basePostsClassify"
+  let collection = "mini_config"
+  let classifyData = {
+    classifyName: event.classifyName,
+    classifyDesc: event.classifyDesc
+  }
+  let result = await db.collection(collection).where({
+    key: key,
+    value: _.eq(classifyData)
+  }).get()
+  if (result.data.length > 0) {
+    return false
+  }
+  else {
+    await db.collection(collection).add({
+      data: {
+        key: key,
+        timestamp: Date.now(),
+        value: classifyData
+      }
+    });
+    return true;
+  }
 }
 
 /**
@@ -168,8 +206,13 @@ async function addBaseClassify(event) {
  * @param {*} event 
  */
 async function deleteConfigById(event) {
-  // TODO
-  return true;
+  try {
+    await db.collection('mini_config').doc(event.id).remove()
+    return true;
+  } catch (e) {
+    console.error(e)
+    return false;
+  }
 }
 
 async function deletePostById(event) {
@@ -266,7 +309,36 @@ async function getClassifyList(event) {
  * @param {*} event 
  */
 async function updateBatchPostsLabel(event) {
-  // TODO
+  console.info(event)
+  for (let i = 0; i < event.posts.length; i++) {
+    let result = await db.collection('mini_posts').doc(event.posts[i]).get()
+    let oldLabels = result.data.label
+    if (event.operate == 'add') {
+      if (oldLabels.indexOf(event) > -1) {
+        continue
+      }
+      await db.collection('mini_posts').doc(event.posts[i]).update({
+        data: {
+          label: _.push([event.label])
+        }
+      })
+    }
+    else if (event.operate == 'delete') {
+
+      var index = oldLabels.indexOf(event);
+      if (index == -1) {
+        continue
+      }
+      oldLabels.splice(index, 1);
+
+      await db.collection('mini_posts').doc(event.posts[i]).update({
+        data: {
+          label: oldLabels
+        }
+      })
+    }
+  }
+
   return true;
 }
 
@@ -275,6 +347,23 @@ async function updateBatchPostsLabel(event) {
  * @param {*} event 
  */
 async function updateBatchPostsClassify(event) {
-  // TODO
+  for (let i = 0; i < event.posts.length; i++) {
+    let result = await db.collection('mini_posts').doc(event.posts[i]).get()
+    if (event.operate == 'add') {
+      await db.collection('mini_posts').doc(event.posts[i]).update({
+        data: {
+          classify: event.classify
+        }
+      })
+    }
+    else if (event.operate == 'delete') {
+      await db.collection('mini_posts').doc(event.posts[i]).update({
+        data: {
+          classify: ""
+        }
+      })
+    }
+  }
+
   return true;
 }

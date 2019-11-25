@@ -34,12 +34,29 @@ Page({
   /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
-  onPullDownRefresh: function () {},
+  onPullDownRefresh: async function () {
+    let that = this;
+    let page = 1
+    that.setData({
+      page: page,
+      posts: [],
+      filter: "",
+      nomore: false,
+      nodata: false,
+      defaultSearchValue: ""
+    })
+    await this.getPostsList("")
+    wx.stopPullDownRefresh();
+  },
 
   /**
    * 页面上拉触底事件的处理函数
    */
-  onReachBottom: function () {},
+  onReachBottom: async function () {
+    let whereItem=this.data.whereItem
+    let filter = this.data.filter
+    await this.getPostsList(whereItem[0],whereItem[1],whereItem[2])
+  },
 
   /**
    * 用户点击右上角分享
@@ -51,8 +68,18 @@ Page({
    * @param {} e 
    */
   async bindconfirm (e) {
-    // TODO
-    console.log('搜索')
+    let that = this;
+    console.log('e.detail.value', e.detail.value)
+    let page = 1
+    that.setData({
+      page: page,
+      posts: [],
+      filter: e.detail.value,
+      nomore: false,
+      nodata: false,
+      whereItem:[e.detail.value, 'createTime','']
+    })
+    await this.getPostsList(e.detail.value, 'createTime')
   },
 
   /**
@@ -115,18 +142,63 @@ Page({
    * 热门按钮切换
    * @param {*} e 
    */
-  hotSelect: function () {
+  hotSelect: async function (e) {
     let that = this
     let hotCur = e.currentTarget.dataset.id
+    let orderBy = "createTime"
+    switch (hotCur) {
+      //浏览最多
+      case 0: {
+        orderBy = "totalVisits"
+        break
+      }
+      //评论最多
+      case 1: {
+        orderBy = "totalComments"
+        break
+      }
+      //点赞最多
+      case 2: {
+        orderBy = "totalZans"
+        break
+      }
+      //收藏最多
+      case 3: {
+        orderBy = "totalCollection"
+        break
+      }
+    }
+    that.setData({
+      posts: [],
+      hotCur: hotCur,
+      defaultSearchValue: "",
+      page: 1,
+      nomore: false,
+      nodata: false,
+      whereItem:['', orderBy,'']
+    })
+    await that.getPostsList("", orderBy)
   },
 
   /**
    * 标签按钮切换
    * @param {*} e 
    */
-  labelSelect: function (e) {
+  labelSelect: async function (e) {
     let that = this
     let labelCur = e.currentTarget.dataset.id
+
+    that.setData({
+      posts: [],
+      labelCur: labelCur,
+      defaultSearchValue: "",
+      page: 1,
+      nomore: false,
+      nodata: false,
+      whereItem:['', 'createTime',labelCur == "全部" ? "" : labelCur]
+    })
+
+    await that.getPostsList("", "createTime", labelCur == "全部" ? "" : labelCur)
   },
 
   /**

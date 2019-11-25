@@ -25,11 +25,7 @@
 
   <scroll-view wx:if="{{showHot}}" scroll-x class="bg-white nav solids-bottom">
     <view class="padding bg-white">
-      <view class="cu-tag round lg {{idx==hotCur?'bg-blue':''}}"
-        wx:for="{{hotItems}}" wx:key
-        data-data="{{item}}"
-        data-id="{{idx}}"
-        bindtap='hotSelect'>
+      <view wx:for="{{hotItems}}" wx:for-index="idx" data-data="{{item}}" class="cu-tag round lg {{idx==hotCur?'bg-blue':''}}" bindtap='hotSelect' data-id="{{idx}}">
         {{item}}
       </view>
     </view>

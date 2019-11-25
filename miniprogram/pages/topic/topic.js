@@ -5,62 +5,59 @@ Page({
    * 页面的初始数据
    */
   data: {
-    classifyList: [{value: {classifyName: 'classifyName',classifyDesc: 'classifyDesc'}},{}]
+    classifyList: [],
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function (options) {
-
+  onLoad:async function(options) {
+    await this.getClassifyList()
   },
-
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady: function () {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow: function () {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide: function () {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload: function () {
-
-  },
-
   /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
-  onPullDownRefresh: function () {
-
+  onPullDownRefresh: async function() {
+    let that = this;
+    that.setData({
+      classifyList: []
+    })
+    await this.getClassifyList()
+    wx.stopPullDownRefresh();
   },
 
   /**
    * 页面上拉触底事件的处理函数
    */
-  onReachBottom: function () {
+  onReachBottom: function() {
 
   },
 
-  /**
-   * 用户点击右上角分享
+    /**
+   * 获取专题集合
+   * @param {*} e 
    */
-  onShareAppMessage: function () {
+  getClassifyList: async function () {
+    wx.showLoading({
+      title: '加载中...',
+    })
+    let that = this
+    let classifyList = await wx.a.getClassifyList()
+    console.info(classifyList)
+    that.setData({
+      classifyList: classifyList.result.data
+    })
+    wx.hideLoading()
+  },
 
+  /**
+   * 跳转至专题详情
+   * @param {} e 
+   */
+  openTopicPosts:async function(e){
+    let classify = e.currentTarget.dataset.tname;
+    wx.navigateTo({
+      url: '../topic/topiclist/topiclist?classify=' + classify
+    })
   }
 })

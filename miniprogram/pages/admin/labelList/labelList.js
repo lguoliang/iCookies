@@ -28,42 +28,7 @@ Page({
     await this.getLabelList()
   },
 
-  /**
-   * tab切换
-   * @param {} e 
-   */
-  tabSelect: async function (e) {
-    let that = this;
-    let tabCur = e.currentTarget.dataset.id
-    let filter;
-    if (tabCur === 1) {
-      filter = {
-        isShow: 1,
-        containLabel: 2,
-        label: that.data.curLabelName
-      }
-    }
-    else {
-      filter = {
-        isShow: 1,
-        containLabel: 1,
-        label: that.data.curLabelName
-      }
-    }
 
-    that.setData({
-      tabCur: tabCur,
-      btnName: tabCur === 1 ? "保存关联" : "取消关联",
-      scrollLeft: (tabCur - 1) * 60,
-      nomore: false,
-      nodata: false,
-      page: 1,
-      posts: [],
-      filter: filter,
-      checkedList: []
-    })
-    await that.getPostsList(filter)
-  },
   /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
@@ -82,18 +47,7 @@ Page({
   onReachBottom: function () {
 
   },
-  /**
-   * 获取label集合
-   * @param {*} e 
-   */
-  getLabelList: async function () {
-    let that = this
-    let labelList = await wx.a.getLabelList()
-    console.info(labelList)
-    that.setData({
-      labelList: labelList.result.data
-    })
-  },
+
 
   /**
     * 显示
@@ -168,7 +122,7 @@ Page({
         title: '保存中...',
       })
 
-      let res = await api.addBaseLabel(labelName)
+      let res = await wx.a.addBaseLabel(labelName)
       console.info(res)
       wx.hideLoading()
       if (res.result) {
@@ -194,7 +148,6 @@ Page({
       }
     }
   },
-
   /**
    * 删除标签
    * @param {*} e 
@@ -208,7 +161,7 @@ Page({
       content: '是否确认删除[' + labelName + ']标签',
       success(res) {
         if (res.confirm) {
-          api.deleteConfigById(labelId).then(res => {
+          wx.a.deleteConfigById(labelId).then(res => {
             return that.onPullDownRefresh()
           }).then(res => { })
           console.log(res)
@@ -227,6 +180,55 @@ Page({
       delta: 1
     })
   },
+  /**
+   * 获取label集合
+   * @param {*} e 
+   */
+  getLabelList: async function () {
+    let that = this
+    let labelList = await wx.a.getLabelList()
+    console.info(labelList)
+    that.setData({
+      labelList: labelList.result.data
+    })
+  },
+
+  /**
+   * tab切换
+   * @param {} e 
+   */
+  tabSelect: async function (e) {
+    let that = this;
+    let tabCur = e.currentTarget.dataset.id
+    let filter;
+    if (tabCur === 1) {
+      filter = {
+        isShow: 1,
+        containLabel: 2,
+        label: that.data.curLabelName
+      }
+    }
+    else {
+      filter = {
+        isShow: 1,
+        containLabel: 1,
+        label: that.data.curLabelName
+      }
+    }
+
+    that.setData({
+      tabCur: tabCur,
+      btnName: tabCur === 1 ? "保存关联" : "取消关联",
+      scrollLeft: (tabCur - 1) * 60,
+      nomore: false,
+      nodata: false,
+      page: 1,
+      posts: [],
+      filter: filter,
+      checkedList: []
+    })
+    await that.getPostsList(filter)
+  },
 
   /**
  * 获取文章列表
@@ -241,7 +243,7 @@ Page({
       wx.hideLoading()
       return
     }
-    let result = await api.getNewPostsList(page, filter)
+    let result = await wx.a.getNewPostsList(page, filter)
     if (result.data.length === 0) {
       that.setData({
         nomore: true
@@ -263,10 +265,9 @@ Page({
     })
     wx.hideLoading()
   },
-
   /**
-   *  触发滚动底部事件
-   */
+     *  触发滚动底部事件
+     */
   bindscrolltolower: async function () {
     let that = this;
     if (!that.data.canOperate) {
@@ -303,7 +304,7 @@ Page({
     })
     try {
       console.info(that.data.curLabelName)
-      let res = await api.updateBatchPostsLabel(that.data.curLabelName, that.data.tabCur == 1 ? "add" : "delete", posts)
+      let res = await wx.a.updateBatchPostsLabel(that.data.curLabelName, that.data.tabCur == 1 ? "add" : "delete", posts)
       console.info(res)
       if (res.result) {
         wx.showToast({
@@ -340,5 +341,5 @@ Page({
       })
     }
     wx.hideLoading()
-  }
+  },
 })

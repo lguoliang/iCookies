@@ -170,8 +170,15 @@ function getPostsList(page, filter, isShow, orderBy, label) {
 * @param {*} postId 
 */
 function getPostComments(page, postId) {
-  // TODO
-  return console.log('api')
+  return db.collection('mini_comments')
+    .where({
+      postId: postId,
+      flag: 0
+    })
+    .orderBy('timestamp', 'desc')
+    .skip((page - 1) * 10)
+    .limit(10)
+    .get()
 }
 
 /**
@@ -179,40 +186,70 @@ function getPostComments(page, postId) {
 * @param {} page 
 */
 function getPostRelated(where, page) {
-  // TODO
-  return console.log('api')
+  return db.collection('mini_posts_related')
+    .where(where)
+    .orderBy('createTime', 'desc')
+    .skip((page - 1) * 10)
+    .limit(10)
+    .get()
 }
 /**
 * 获取文章详情
 * @param {} id 
 */
 function getPostDetail(id) {
-  // TODO
-  return console.log('api')
+  return wx.cloud.callFunction({
+    name: 'postsService',
+    data: {
+      action: "getPostsDetail",
+      id: id
+    }
+  })
 }
 
 /**
 * 新增用户收藏文章
 */
 function addPostCollection(data) {
-  // TODO
-  return console.log('api')
+  return wx.cloud.callFunction({
+    name: 'postsService',
+    data: {
+      action: "addPostCollection",
+      postId: data.postId,
+      postTitle: data.postTitle,
+      postUrl: data.postUrl,
+      postDigest: data.postDigest,
+      type: data.type
+    }
+  })
 }
 
 /**
 * 取消喜欢或收藏
 */
 function deletePostCollectionOrZan(postId, type) {
-  // TODO
-  return console.log('api')
+  return wx.cloud.callFunction({
+    name: 'postsService',
+    data: {
+      action: "deletePostCollectionOrZan",
+      postId: postId,
+      type: type
+    }
+  })
 }
 
 /**
 * 新增评论
 */
-function addPostComment(commentContent) {
-  // TODO
-  return console.log('api')
+function addPostComment(commentContent, accept) {
+  return wx.cloud.callFunction({
+    name: 'postsService',
+    data: {
+      action: "addPostComment",
+      commentContent: commentContent,
+      accept: accept
+    }
+  })
 }
 
 /**
@@ -220,8 +257,17 @@ function addPostComment(commentContent) {
 * @param {} data 
 */
 function addPostZan(data) {
-  // TODO
-  return console.log('api')
+  return wx.cloud.callFunction({
+    name: 'postsService',
+    data: {
+      action: "addPostZan",
+      postId: data.postId,
+      postTitle: data.postTitle,
+      postUrl: data.postUrl,
+      postDigest: data.postDigest,
+      type: data.type
+    }
+  })
 }
 
 /**
@@ -230,8 +276,16 @@ function addPostZan(data) {
 * @param {*} comments 
 */
 function addPostChildComment(id, postId, comments) {
-  // TODO
-  return console.log('api')
+  return wx.cloud.callFunction({
+    name: 'postsService',
+    data: {
+      action: "addPostChildComment",
+      id: id,
+      comments: comments,
+      postId: postId,
+      accept: accept
+    }
+  })
 }
 
 /**
@@ -365,24 +419,40 @@ function upsertPosts(id, data) {
 * 新增基础标签
 */
 function addBaseLabel(labelName) {
-  // TODO
-  return console.log('api')
+  return wx.cloud.callFunction({
+    name: 'adminService',
+    data: {
+      action: "addBaseLabel",
+      labelName: labelName
+    }
+  })
 }
 
 /**
 * 新增基础主题
 */
 function addBaseClassify(classifyName, classifyDesc) {
-  // TODO
-  return console.log('api')
+  return wx.cloud.callFunction({
+    name: 'adminService',
+    data: {
+      action: "addBaseClassify",
+      classifyName: classifyName,
+      classifyDesc: classifyDesc
+    }
+  })
 }
 
 /**
 * 新增基础主题
 */
 function deleteConfigById(id) {
-  // TODO
-  return console.log('api')
+  return wx.cloud.callFunction({
+    name: 'adminService',
+    data: {
+      action: "deleteConfigById",
+      id: id
+    }
+  })
 }
 
 function deletePostById(id) {
@@ -433,16 +503,30 @@ function getClassifyList() {
 * 获取label集合
 */
 function updateBatchPostsClassify(classify,operate,posts) {
-  // TODO
-  return console.log('api')
+  return wx.cloud.callFunction({
+    name: 'adminService',
+    data: {
+      action: "updateBatchPostsClassify",
+      posts: posts,
+      operate: operate,
+      classify: classify
+    }
+  })
 }
 
 /**
 * 获取label集合
 */
-function updateBatchPostsLabel(label,operate,posts) {
-  // TODO
-  return console.log('api')
+function updateBatchPostsLabel(label, operate, posts) {
+  return wx.cloud.callFunction({
+    name: 'adminService',
+    data: {
+      action: "updateBatchPostsLabel",
+      posts: posts,
+      operate: operate,
+      label: label
+    }
+  })
 }
 
 /**
@@ -463,6 +547,14 @@ function getTempUrl(fileID) {
 
 module.exports = {
   getPostsList,
+  getPostDetail,// 获取详情
+  getPostRelated,// 获取收藏状态
+  getPostComments,// 获取评论
+  addPostCollection, // 收藏
+  addPostZan,// 点赞
+  deletePostCollectionOrZan,// 取消收藏 & 点赞
+  addPostComment, // 评论
+  addPostChildComment, // 子评论
   getNewPostsList,
   checkAuthor,// 校验
   queryFormIds,
@@ -472,5 +564,10 @@ module.exports = {
   updatePostsShowStatus, // 控制文章显示
   getClassifyList, // 获取专题列表
   getLabelList, // 获取标签列表
-  deletePostById // 删除文章
+  deletePostById, // 删除文章
+  addBaseLabel, // 保存标签
+  deleteConfigById, // 删除标签
+  updateBatchPostsLabel, // 标签关联文章
+  addBaseClassify, // 新增专题
+  updateBatchPostsClassify // 专题关联文章
 }
